@@ -313,7 +313,8 @@ to_val(false) ->
   <<"false">>;
 
 to_val(N) when is_integer(N) ->
-  integer_to_binary(N);
+  Val = integer_to_binary(N),
+  <<Val/binary, "i">>;
 
 to_val(N) when is_float(N) ->
   float_to_binary(N);
@@ -329,7 +330,7 @@ to_val(S) when is_binary(S) ->
   <<?Q/binary, Escaped/binary, ?Q/binary>>.
 
 to_tag_val(V) when is_integer(V) ->
-  to_val(V);
+  integer_to_binary(V);
 
 to_tag_val(V) when is_float(V) ->
   to_val(V);
@@ -386,7 +387,8 @@ to_val_test() ->
   ?assertEqual(<<"\"te\\,st\"">>, to_val(<<"te,st">>)),
   ?assertEqual(<<"\"te\\\"st\"">>, to_val(<<"te\"st">>)),
   ?assertEqual(<<"\"t\\ e\\\"s\\,t\\\"\"">>, to_val(<<"t e\"s,t\"">>)),
-  ?assertEqual(<<"123">>, to_val(123)).
+  ?assertEqual(<<"123i">>, to_val(123)),
+  ?assertEqual(float_to_binary(123.0), to_val(123.0)).
 
 to_tag_val_test() ->
   ?assertEqual(<<"test">>, to_tag_val(test)),
@@ -407,7 +409,7 @@ encode_time_test() ->
 
 encode_2_proplist_point_test() ->
   ?assertEqual(
-    <<"test 1=1">>,
+    <<"test 1=1i">>,
     encode(test, [{1, 1}])
   ).
 
